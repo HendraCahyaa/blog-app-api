@@ -1,6 +1,7 @@
 import { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
 import { paginationQueryParams } from "../types/pagination.js";
+import { ApiError } from "../utils/api-error.js";
 
 export const getPostServices = async (query: paginationQueryParams) => {
   const { page, take, sortBy, sortOrder, search } = query;
@@ -16,6 +17,7 @@ export const getPostServices = async (query: paginationQueryParams) => {
     skip: (page - 1) * take,
     take: take,
     orderBy: { [sortBy]: sortOrder },
+    include: { user: { select: { name: true } } },
   });
 
   const total = await prisma.post.count({ where: whereClause });
@@ -27,4 +29,16 @@ export const getPostServices = async (query: paginationQueryParams) => {
       total,
     },
   };
+};
+
+export const getPostBySlugService = async (slug: string) => {
+  const blog = await prisma.post.findUnique({
+    where: { slug },
+    include: { user: { select: { name: true } } },
+  });
+
+  if (!blog) {
+    throw new ApiError("Blog not found", 404);
+  }
+  return blog;
 };

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ApiError } from "./api-error";
-
+import { ApiError } from "./api-error.js";
 export const globalError = (
   err: ApiError,
   req: Request,
@@ -10,7 +9,7 @@ export const globalError = (
   const message = err.message || "something went wrong";
   const status = err.status || 500;
 
-  return res.status(404).send({ message: "not found" });
+  return res.status(404).send({ message: message });
 };
 
 export const notFoundError = (req: Request, res: Response) => {

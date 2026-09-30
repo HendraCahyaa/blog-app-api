@@ -1,4 +1,5 @@
 import {
+  createPostService,
   getPostBySlugService,
   getPostServices,
 } from "../services/post.services.js";
@@ -19,5 +20,9 @@ export const getPostControllers = async (req: Request, res: Response) => {
 export const getPostBySlugControllers = async (req: Request, res: Response) => {
   const slug = String(req.params.slug);
   const result = await getPostBySlugService(slug);
+  res.status(200).send(result);
+};
+export const createPostControllers = async (req: Request, res: Response) => {
+  const result = await createPostService(req.body);
   res.status(200).send(result);
 };

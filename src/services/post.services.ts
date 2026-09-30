@@ -2,6 +2,8 @@ import { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
 import { paginationQueryParams } from "../types/pagination.js";
 import { ApiError } from "../utils/api-error.js";
+import { generateSlug } from "../utils/slug.js";
+import { CreatePostSchema } from "../validators/post.validator.js";
 
 export const getPostServices = async (query: paginationQueryParams) => {
   const { page, take, sortBy, sortOrder, search } = query;
@@ -41,4 +43,27 @@ export const getPostBySlugService = async (slug: string) => {
     throw new ApiError("Blog not found", 404);
   }
   return blog;
+};
+
+export const createPostService = async (body: CreatePostSchema) => {
+  const blog = await prisma.post.findUnique({
+    where: { title: body.title },
+  });
+  if (blog) {
+    throw new ApiError("Title already exist", 400);
+  }
+  const slug = generateSlug(body.title);
+
+  await prisma.post.create({
+    data: {
+      title: body.title,
+      description: body.description,
+      category: body.category,
+      slug: slug,
+      content: body.content,
+      thumbnail: body.thumbnail,
+      userId: body.userId,
+    },
+  });
+  return { message: "create post success" };
 };

@@ -6,10 +6,16 @@ import {
 } from "../controllers/post.controller.js";
 import { validate } from "../middlewares/validation.middleware.js";
 import { createPostSchema } from "../validators/post.validator.js";
+import { verifyToken } from "../middlewares/auth.middleware.js";
 
 const postRoutes = express.Router();
 postRoutes.get("/", getPostControllers);
 postRoutes.get("/:slug", getPostBySlugControllers);
-postRoutes.post("/", validate(createPostSchema), createPostControllers);
+postRoutes.post(
+  "/",
+  verifyToken(process.env.JWT_SECRET!),
+  validate(createPostSchema),
+  createPostControllers,
+);
 
 export { postRoutes };

@@ -23,6 +23,7 @@ export const getPostBySlugControllers = async (req: Request, res: Response) => {
   res.status(200).send(result);
 };
 export const createPostControllers = async (req: Request, res: Response) => {
-  const result = await createPostService(req.body);
+  const userId = res.locals.user.id;
+  const result = await createPostService(req.body, userId);
   res.status(200).send(result);
 };

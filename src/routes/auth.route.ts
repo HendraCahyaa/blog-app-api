@@ -4,9 +4,9 @@ import {
   registerController,
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/validation.middleware.js";
-import { registerSchema } from "../validators/auth.validator.js";
+import { loginSchema, registerSchema } from "../validators/auth.validator.js";
 
 const authRoutes = express.Router();
 authRoutes.post("/register", validate(registerSchema), registerController);
-authRoutes.post("/login", validate(registerSchema), loginController);
+authRoutes.post("/login", validate(loginSchema), loginController);
 export { authRoutes };

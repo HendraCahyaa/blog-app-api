@@ -3,7 +3,11 @@ import { prisma } from "../lib/prisma.js";
 import argon from "argon2";
 import { ApiError } from "../utils/api-error.js";
 import jwt from "jsonwebtoken";
-import { LoginSchema } from "../validators/auth.validator.js";
+import {
+  ForgotPasswordSchema,
+  LoginSchema,
+} from "../validators/auth.validator.js";
+import { sendMail } from "../lib/mail.js";
 
 export const registerService = async (
   body: Pick<User, "name" | "email" | "password">,
@@ -24,6 +28,15 @@ export const registerService = async (
       name: body.name,
       email: body.email,
       password: hashedPassword,
+    },
+  });
+  //5. kirim email welcomeing
+  await sendMail({
+    to: body.email,
+    subject: "Welcome to Blog App",
+    templateName: "welcome.hbs",
+    context: {
+      name: body.name,
     },
   });
   //5. return success
@@ -65,4 +78,28 @@ export const loginService = async (body: LoginSchema) => {
       profilePic: user.profilePic,
     },
   };
+};
+
+export const forgotPasswordService = async (body: ForgotPasswordSchema) => {
+  const user = await prisma.user.findUnique({
+    where: { email: body.email },
+  });
+
+  if (!user) {
+    return { message: "Send email success" };
+  }
+  const payload = { id: user.id, role: user.role };
+  const token = jwt.sign(payload, process.env.JWT_SECRET_RESET!, {
+    expiresIn: "15m",
+  });
+
+  await sendMail({
+    to: body.email,
+    subject: "Reset password request",
+    templateName: "reset-password.hbs",
+    context: {
+      linkReset: `${process.env.BASE_URL_FE}/reset-password?token=${token}`,
+    },
+  });
+  return { message: "send email success" };
 };

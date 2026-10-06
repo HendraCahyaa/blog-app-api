@@ -24,6 +24,8 @@ export const getPostBySlugControllers = async (req: Request, res: Response) => {
 };
 export const createPostControllers = async (req: Request, res: Response) => {
   const userId = res.locals.user.id;
-  const result = await createPostService(req.body, userId);
+  const files = req.files as { [fieldName: string]: Express.Multer.File[] };
+  const thumbnail = files.thumbnail?.[0];
+  const result = await createPostService(req.body, thumbnail, userId);
   res.status(200).send(result);
 };

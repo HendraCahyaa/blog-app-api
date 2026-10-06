@@ -1,4 +1,5 @@
 import { Prisma } from "../../generated/prisma/client.js";
+import { uploadImage } from "../lib/cloudinary.js";
 import { prisma } from "../lib/prisma.js";
 import { paginationQueryParams } from "../types/pagination.js";
 import { ApiError } from "../utils/api-error.js";
@@ -47,6 +48,7 @@ export const getPostBySlugService = async (slug: string) => {
 
 export const createPostService = async (
   body: CreatePostSchema,
+  thumbnail: Express.Multer.File,
   userId: number,
 ) => {
   const blog = await prisma.post.findUnique({
@@ -56,6 +58,7 @@ export const createPostService = async (
     throw new ApiError("Title already exist", 400);
   }
   const slug = generateSlug(body.title);
+  const { secure_url } = await uploadImage(thumbnail);
 
   await prisma.post.create({
     data: {
@@ -64,7 +67,7 @@ export const createPostService = async (
       category: body.category,
       slug: slug,
       content: body.content,
-      thumbnail: body.thumbnail,
+      thumbnail: secure_url,
       userId: userId,
     },
   });

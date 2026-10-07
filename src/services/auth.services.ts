@@ -6,8 +6,10 @@ import jwt from "jsonwebtoken";
 import {
   ForgotPasswordSchema,
   LoginSchema,
+  ResetPasswordSchema,
 } from "../validators/auth.validator.js";
 import { sendMail } from "../lib/mail.js";
+import { getUserServices } from "./user.services.js";
 
 export const registerService = async (
   body: Pick<User, "name" | "email" | "password">,
@@ -102,4 +104,19 @@ export const forgotPasswordService = async (body: ForgotPasswordSchema) => {
     },
   });
   return { message: "send email success" };
+};
+
+export const resetPasswordService = async (
+  body: ResetPasswordSchema,
+  userId: number,
+) => {
+  await getUserServices(userId);
+
+  const hashedPassword = await argon.hash(body.password);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: hashedPassword },
+  });
+  return { message: "reset password success" };
 };

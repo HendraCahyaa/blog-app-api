@@ -30,8 +30,11 @@ export const resetPasswordSchema = z.object({
       message: "Must containt at least code one special character",
     }),
 });
-
+export const googleSchema = z.object({
+  accessToken: z.string().min(1),
+});
 export type LoginSchema = z.infer<typeof loginSchema>;
+export type GoogleSchema = z.infer<typeof googleSchema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;

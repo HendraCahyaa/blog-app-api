@@ -4,6 +4,7 @@ import argon from "argon2";
 import { ApiError } from "../utils/api-error.js";
 import jwt from "jsonwebtoken";
 import {
+  ChangePasswordSchema,
   ForgotPasswordSchema,
   GoogleSchema,
   LoginSchema,
@@ -177,4 +178,28 @@ export const googleService = async (body: GoogleSchema) => {
       profilePic: user.profilePic,
     },
   };
+};
+
+export const changePasswordService = async (
+  body: ChangePasswordSchema,
+  userId: number,
+) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+  if (!user) {
+    throw new ApiError("User not found", 404);
+  }
+  const isPassMatch = await argon.verify(user.password, body.oldPassword);
+
+  if (!isPassMatch) {
+    throw new ApiError("Password do not match", 400);
+  }
+  const newPassword = await argon.hash(body.newPassword);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: newPassword },
+  });
+  return { message: "Change password success" };
 };

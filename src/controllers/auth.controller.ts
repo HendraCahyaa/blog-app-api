@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+  changePasswordService,
   forgotPasswordService,
   googleService,
   loginService,
@@ -25,5 +26,10 @@ export const resetPasswordController = async (req: Request, res: Response) => {
 };
 export const googleController = async (req: Request, res: Response) => {
   const result = await googleService(req.body);
+  res.status(200).send(result);
+};
+export const changePasswordController = async (req: Request, res: Response) => {
+  const userId = res.locals.user.id;
+  const result = await changePasswordService(req.body, userId);
   res.status(200).send(result);
 };

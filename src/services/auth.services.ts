@@ -68,13 +68,25 @@ export const loginService = async (body: LoginSchema) => {
   //5. generate access token (jwt)
   const payload = { id: user.id, role: user.role };
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
-    expiresIn: "1d",
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_REFRESH!, {
+    expiresIn: "7d",
+  });
+
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiredAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
   });
 
   //6.return message login success : data user + access token
   return {
     message: "Login success",
     accessToken: accessToken,
+    refreshToken: refreshToken,
     user: {
       id: user.id,
       name: user.name,
@@ -202,4 +214,36 @@ export const changePasswordService = async (
     data: { password: newPassword },
   });
   return { message: "Change password success" };
+};
+export const refreshService = async (refreshToken?: string) => {
+  if (!refreshToken) {
+    throw new ApiError("No refresh token", 400);
+  }
+  const storedToken = await prisma.refreshToken.findUnique({
+    where: { token: refreshToken },
+    include: {
+      user: true,
+    },
+  });
+
+  if (!storedToken) {
+    throw new ApiError("Refresh token not found", 400);
+  }
+  if (storedToken.expiredAt < new Date()) {
+    throw new ApiError("Refresh token expired", 400);
+  }
+  const payload = { id: storedToken.user.id, role: storedToken.user.role };
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
+    expiresIn: "15m",
+  });
+  return { accessToken };
+};
+export const logoutService = async (refreshToken?: string) => {
+  if (!refreshToken) {
+    throw new ApiError("No refresh token", 400);
+  }
+  await prisma.refreshToken.delete({
+    where: { token: refreshToken },
+  });
+  return { message: "Logout success" };
 };

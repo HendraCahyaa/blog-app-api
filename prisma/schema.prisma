@@ -13,17 +13,18 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  name       String
-  email      String    @unique
-  password   String
-  role       UserRole  @default(USER)
-  provider   Provider  @default(CREDENTIALS)
-  profilePic String?
-  deleteAt   DateTime?
-  createAt   DateTime  @default(now())
-  updateTime DateTime  @updatedAt
-  posts      Post[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  role          UserRole       @default(USER)
+  provider      Provider       @default(CREDENTIALS)
+  profilePic    String?
+  deleteAt      DateTime?
+  createAt      DateTime       @default(now())
+  updateTime    DateTime       @updatedAt
+  posts         Post[]
+  refreshTokens RefreshToken[]
 
   @@map("users") //rename table di database
 }
@@ -54,4 +55,17 @@ model Post {
   user User @relation(fields: [userId], references: [id])
 
   @@map("posts")
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  token      String   @unique
+  userId     Int
+  expiredAt  DateTime
+  createAt   DateTime @default(now())
+  updateTime DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("refresh_tokens")
 }

@@ -6,7 +6,7 @@ import { error } from "node:console";
 
 export const verifyToken = (secreetKey: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.cookies?.accessToken;
 
     if (!token) {
       throw new ApiError("No token provided", 401);

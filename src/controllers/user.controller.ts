@@ -3,6 +3,7 @@ import {
   deleteUserService,
   editUserService,
   getUsersServices,
+  sampleService,
 } from "../services/user.services.js";
 import { getUserServices } from "../services/user.services.js";
 import { Request, Response } from "express";
@@ -38,5 +39,9 @@ export const editUserController = async (req: Request, res: Response) => {
 export const deleteUserController = async (req: Request, res: Response) => {
   const userId = Number(req.params.id);
   const result = await deleteUserService(userId);
+  res.status(200).send(result);
+};
+export const samplecontroller = async (req: Request, res: Response) => {
+  const result = await sampleService();
   res.status(200).send(result);
 };

@@ -9,3 +9,19 @@ services:
       - 6543:5432
     environment:
       - POSTGRES_PASSWORD=admin
+
+  cache:
+    image: redis:8.10.2-alpine
+    container_name: redis_container
+    restart: always
+    ports:
+      - 6379:6379
+
+  mail:
+    image: mailhog/mailhog
+    platform: linux/amd64
+    container_name: mailhog_container
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025

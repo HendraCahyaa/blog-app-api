@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "transactions" ALTER COLUMN "status" SET DEFAULT 'WAITING_FOR_PAYMENT';

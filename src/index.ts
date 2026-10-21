@@ -6,6 +6,8 @@ import cors from "cors";
 import { authRoutes } from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import { corsOption } from "./config/cors.js";
+import { transactionRoutes } from "./routes/transaction.route.js";
+import { expiredTransactionCron } from "./scripts/transaction.js";
 
 const PORT = 8000;
 
@@ -25,7 +27,9 @@ app.get("/api", (req, res) => res.status(200).send("welcome to my API"));
 app.use("/users", useRoutes);
 app.use("/posts", postRoutes);
 app.use("/auth", authRoutes);
+app.use("/transaction", transactionRoutes);
 
 app.use(globalError);
 app.use(notFoundError);
+app.use(expiredTransactionCron);
 app.listen(PORT, () => console.log(`Server running on port : ${PORT}`));

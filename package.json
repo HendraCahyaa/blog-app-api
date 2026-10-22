@@ -33,6 +33,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "file-type": "^16.5.4",
     "handlebars": "^4.7.10",
     "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",

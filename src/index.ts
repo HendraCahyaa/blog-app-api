@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import { corsOption } from "./config/cors.js";
 import { transactionRoutes } from "./routes/transaction.route.js";
 import { expiredTransactionCron } from "./scripts/transaction.js";
+import { loggerHttp } from "./lib/logger.js";
 
 const PORT = 8000;
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 app.use(cookieParser());
+app.use(loggerHttp);
 
 app.get("/api", (req, res) => res.status(200).send("welcome to my API"));
 app.use("/users", useRoutes);

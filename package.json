@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "copy-files": "node -e \"require('fs').cpSync('src/templates', 'dist/src/templates', { recursive: true });\"",
+    "build": "tsc && npm run copy-files",
+    "start": "node dist/src/index.js",
     "dev": "tsx --watch src/index.ts"
   },
   "keywords": [],

@@ -1,0 +1,6 @@
+node_modules
+dist
+docker
+.agents
+.claude
+.windsurf

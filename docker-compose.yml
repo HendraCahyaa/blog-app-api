@@ -10,6 +10,15 @@ services:
     environment:
       - POSTGRES_PASSWORD=admin
 
+  db_testing:
+    image: postgres:18
+    container_name: postgres_testing_container
+    restart: always
+    ports:
+      - 6544:5432
+    environment:
+      - POSTGRES_PASSWORD=admin321
+
   cache:
     image: redis:8.10.2-alpine
     container_name: redis_container

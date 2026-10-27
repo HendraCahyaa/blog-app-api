@@ -3,19 +3,22 @@ import pino from "pino";
 import { pinoHttp } from "pino-http";
 
 const isProd = process.env.NODE_ENV === "production";
+const isTest = process.env.NODE_ENV === "test";
 
 export const logger = pino({
-  level: isProd ? "info" : "debug",
-  transport: isProd
-    ? undefined
-    : {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-          translateTime: "yyyy-mm-dd HH:MM:ss",
-          singleLine: true,
+  enabled: !isTest,
+  level: isTest ? "silent" : isProd ? "info" : "debug",
+  transport:
+    isProd || isTest
+      ? undefined
+      : {
+          target: "pino-pretty",
+          options: {
+            colorize: true,
+            translateTime: "yyyy-mm-dd HH:MM:ss",
+            singleLine: true,
+          },
         },
-      },
 });
 export const loggerHttp = pinoHttp({
   logger: logger,

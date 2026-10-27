@@ -55,14 +55,14 @@ export const loginService = async (body: LoginSchema) => {
   });
   //2. kalau email tidak ada throw error
   if (!user) {
-    throw new ApiError("invalid credentials", 400);
+    throw new ApiError("Invalid credentials", 400);
   }
   //3. cek passwordnya ada atau tidak
   const isPassMatch = await argon.verify(user.password, body.password);
 
   //4. kalo password salah throw error
   if (!isPassMatch) {
-    throw new ApiError("invalid credential", 400);
+    throw new ApiError("Invalid credentials", 400);
   }
 
   //5. generate access token (jwt)

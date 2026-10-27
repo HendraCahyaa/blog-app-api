@@ -7,13 +7,18 @@
     "copy-files": "node -e \"require('fs').cpSync('src/templates', 'dist/src/templates', { recursive: true });\"",
     "build": "tsc && npm run copy-files",
     "start": "node dist/src/index.js",
-    "dev": "tsx --watch src/index.ts"
+    "dev": "tsx --watch src/index.ts",
+    "postinstall": "prisma generate",
+    "test:integration": "vitest run --maxWorkers=1",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@prisma/client": "^7.10.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
@@ -22,9 +27,15 @@
     "@types/multer": "^2.3.0",
     "@types/node": "^26.5.0",
     "@types/pg": "^8.23.1",
+    "@types/supertest": "^7.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10",
     "prisma": "^7.10.0",
+    "supertest": "^7.3.1",
     "tsx": "^4.23.13",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
@@ -34,7 +45,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "file-type": "^16.5.4",
+    "file-type": "^22.2.0",
     "handlebars": "^4.7.10",
     "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
@@ -46,5 +57,8 @@
     "pino-http": "^11.0.0",
     "pino-pretty": "^13.2.0",
     "zod": "^4.6.5"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }
